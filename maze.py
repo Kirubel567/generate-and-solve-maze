@@ -249,7 +249,7 @@ def draw_solver():
 
     glEnd()
 
-    def main():
+def main():
     pygame.init()
     window_size = (500, 600)
 
