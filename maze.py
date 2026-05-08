@@ -188,3 +188,63 @@ def solve_step():
     else:
         solver_complete = True
         print("No solution found!")
+
+#drawing functions
+def draw_maze():
+    glColor3f(1.0, 1.0, 1.0)
+    glBegin(GL_LINES)
+    
+    for r in range(R + 1):
+        for c in range(1, C + 1):
+            if northWall[r][c] == 1:
+                glVertex2f(c - 1, r)
+                glVertex2f(c, r)
+                
+    for r in range(1, R + 1):
+        for c in range(C + 1):
+            if eastWall[r][c] == 1:
+                glVertex2f(c, r - 1)
+                glVertex2f(c, r)
+    glEnd()
+
+def draw_mouse(r, c, color=(0.0, 1.0, 0.0), size="full"):
+    glColor3f(color[0], color[1], color[2])
+    glBegin(GL_QUADS)
+    
+    if size == "full":
+        glVertex2f(c - 1, r - 1)
+        glVertex2f(c, r - 1)
+        glVertex2f(c, r)
+        glVertex2f(c - 1, r)
+    else:
+        glVertex2f(c - 0.7, r - 0.7)
+        glVertex2f(c - 0.3, r - 0.7)
+        glVertex2f(c - 0.3, r - 0.3)
+        glVertex2f(c - 0.7, r - 0.3)
+    glEnd()
+
+def draw_stack():
+    for sr, sc in stack:
+        draw_mouse(sr, sc, color=(0.2, 0.2, 0.6))
+
+def draw_solver():
+    glBegin(GL_QUADS)
+
+    for r in range(1, R + 1):
+        for c in range(1, C + 1):
+
+            if solver_state[r][c] == 1:
+                glColor3f(1.0, 0.0, 0.0)
+                glVertex2f(c - 0.6, r - 0.6)
+                glVertex2f(c - 0.4, r - 0.6)
+                glVertex2f(c - 0.4, r - 0.4)
+                glVertex2f(c - 0.6, r - 0.4)
+
+            elif solver_state[r][c] == 2:
+                glColor3f(0.0, 0.0, 1.0)
+                glVertex2f(c - 0.6, r - 0.6)
+                glVertex2f(c - 0.4, r - 0.6)
+                glVertex2f(c - 0.4, r - 0.4)
+                glVertex2f(c - 0.6, r - 0.4)
+
+    glEnd()
