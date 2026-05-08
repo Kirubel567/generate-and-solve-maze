@@ -248,3 +248,78 @@ def draw_solver():
                 glVertex2f(c - 0.6, r - 0.4)
 
     glEnd()
+
+    def main():
+    pygame.init()
+    window_size = (500, 600)
+
+    pygame.display.set_mode(window_size, DOUBLEBUF | OPENGL)
+    pygame.display.set_caption("Maze Generator and Solver")
+
+    gluPerspective(45, (window_size[0] / window_size[1]), 0.1, 150.0)
+    glTranslatef(0.0, 0.0, -10)
+
+    max_dim = max(C, R)
+    scale_factor = 6.0 / max_dim
+
+    print("Generating Initial Maze...")
+
+    while True:
+
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            elif event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_r:
+                    reset_maze()
+
+                elif event.key == pygame.K_s:
+
+                    if generation_complete and not solver_complete:
+                        print("Solver Started!")
+                        global solver_started
+                        solver_started = True
+
+                elif event.key == pygame.K_c:
+
+                    if generation_complete:
+                        reset_solver()
+
+        if not generation_complete:
+            generate_step()
+            generate_step()
+
+        elif solver_started and not solver_complete:
+            solve_step()
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glPushMatrix()
+
+        glScalef(scale_factor, scale_factor, 1.0)
+        glTranslatef(-C / 2.0, -R / 2.0, 0.0)
+
+        if not generation_complete:
+            draw_stack()
+            draw_mouse(current_r, current_c, color=(0.0, 1.0, 0.0))
+
+        else:
+            draw_solver()
+
+            if not solver_complete and solver_current:
+                draw_mouse(solver_current[0], solver_current[1], color=(1.0, 1.0, 0.0), size="small")
+
+            elif solver_complete:
+                draw_mouse(end_cell[0], end_cell[1], color=(0.0, 1.0, 0.0), size="small")
+
+        draw_maze()
+
+        glPopMatrix()
+        pygame.display.flip()
+        pygame.time.wait(10)
+
+if __name__ == "__main__":
+    main()
