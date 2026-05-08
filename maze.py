@@ -104,6 +104,22 @@ def generate_step():
         elif direction == "E": eastWall[current_r][current_c] = 0 
         elif direction == "W": eastWall[current_r][current_c - 1] = 0 
 
+        if random.random() < 0.05:
+            extra_walls = []
+
+            if current_r < R and northWall[current_r][current_c] == 1: extra_walls.append(("N", current_r, current_c))
+            if current_r > 1 and northWall[current_r - 1][current_c] == 1: extra_walls.append(("S", current_r - 1, current_c))
+            if current_c < C and eastWall[current_r][current_c] == 1: extra_walls.append(("E", current_r, current_c))
+            if current_c > 1 and eastWall[current_r][current_c - 1] == 1: extra_walls.append(("W", current_r, current_c - 1))
+
+            if extra_walls:
+                ew_dir, ew_r, ew_c = random.choice(extra_walls)
+
+                if ew_dir == "N": northWall[ew_r][ew_c] = 0
+                elif ew_dir == "S": northWall[ew_r][ew_c] = 0
+                elif ew_dir == "E": eastWall[ew_r][ew_c] = 0
+                elif ew_dir == "W": eastWall[ew_r][ew_c] = 0
+                
         current_r, current_c = next_r, next_c
         
     elif len(stack) > 0:
