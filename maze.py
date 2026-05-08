@@ -119,7 +119,7 @@ def generate_step():
                 elif ew_dir == "S": northWall[ew_r][ew_c] = 0
                 elif ew_dir == "E": eastWall[ew_r][ew_c] = 0
                 elif ew_dir == "W": eastWall[ew_r][ew_c] = 0
-                
+
         current_r, current_c = next_r, next_c
         
     elif len(stack) > 0:
@@ -147,4 +147,44 @@ def generate_step():
             print(">>> Press 'C' to clear the solver path. <<<") 
             print(">>> Press 'R' to generate a completely new maze. <<<") 
 
+#dfs backtracking solver
+def solve_step():
+    global solver_current, solver_stack, solver_complete
+    
+    if not solver_started or solver_complete:
+        return
+        
+    r, c = solver_current
+    
+    if (r, c) == end_cell:
+        solver_complete = True
+        print("Maze Solved! Press 'R' to generate a new maze, or 'C' to clear and solve this one again.")
+        return
+        
+    valid_moves = []
+    
+    if r < R and northWall[r][c] == 0 and solver_state[r+1][c] == 0:
+        valid_moves.append((r+1, c))
 
+    if r > 1 and northWall[r-1][c] == 0 and solver_state[r-1][c] == 0:
+        valid_moves.append((r-1, c))
+
+    if c < C and eastWall[r][c] == 0 and solver_state[r][c+1] == 0:
+        valid_moves.append((r, c+1))
+
+    if c > 1 and eastWall[r][c-1] == 0 and solver_state[r][c-1] == 0:
+        valid_moves.append((r, c-1))
+        
+    if valid_moves:
+        solver_stack.append(solver_current)
+        next_cell = random.choice(valid_moves)
+        solver_current = next_cell
+        solver_state[next_cell[0]][next_cell[1]] = 1
+
+    elif solver_stack:
+        solver_state[r][c] = 2
+        solver_current = solver_stack.pop()
+
+    else:
+        solver_complete = True
+        print("No solution found!")
