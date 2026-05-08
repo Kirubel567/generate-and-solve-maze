@@ -67,4 +67,68 @@ def reset_maze():
     reset_solver() # Call reset_solver to clear all solver variables too
     print("\nMaze completely reset! Generating a new maze") 
 
+def generate_step():
+    global current_r, current_c, stack, generation_complete 
+    global start_cell, end_cell, solver_current 
     
+    if generation_complete: 
+        return 
+        
+    unvisited_neighbors = [] 
+    
+    def is_unvisited(r, c):
+        return (northWall[r][c] == 1 and 
+                northWall[r-1][c] == 1 and 
+                eastWall[r][c] == 1 and 
+                eastWall[r][c-1] == 1) 
+    
+
+    if current_r < R and is_unvisited(current_r + 1, current_c):
+        unvisited_neighbors.append((current_r + 1, current_c, "N")) 
+    
+    if current_r > 1 and is_unvisited(current_r - 1, current_c): 
+        unvisited_neighbors.append((current_r - 1, current_c, "S")) 
+    
+    if current_c < C and is_unvisited(current_r, current_c + 1): 
+        unvisited_neighbors.append((current_r, current_c + 1, "E"))
+    
+    if current_c > 1 and is_unvisited(current_r, current_c - 1): 
+        unvisited_neighbors.append((current_r, current_c - 1, "W")) 
+            
+    if len(unvisited_neighbors) > 0: 
+        stack.append((current_r, current_c)) 
+        next_r, next_c, direction = random.choice(unvisited_neighbors) 
+        
+        if direction == "N": northWall[current_r][current_c] = 0 
+        elif direction == "S": northWall[current_r - 1][current_c] = 0 
+        elif direction == "E": eastWall[current_r][current_c] = 0 
+        elif direction == "W": eastWall[current_r][current_c - 1] = 0 
+
+        current_r, current_c = next_r, next_c
+        
+    elif len(stack) > 0:
+        current_r, current_c = stack.pop() 
+        
+    else: 
+        if not generation_complete: 
+            generation_complete = True 
+            print("Maze Generation Complete!") 
+           
+            start_r = random.randint(1, R)
+            end_r = random.randint(1, R)
+            
+            start_cell = (start_r, 1) 
+            end_cell = (end_r, C) 
+            
+            
+            eastWall[start_r][0] = 0 
+            eastWall[end_r][C] = 0 
+            
+            solver_current = start_cell 
+            solver_state[start_r][1] = 1 
+            print(f"Start at {start_cell}, End at {end_cell}") 
+            print(">>> Press 'S' to start solving! <<<") 
+            print(">>> Press 'C' to clear the solver path. <<<") 
+            print(">>> Press 'R' to generate a completely new maze. <<<") 
+
+
